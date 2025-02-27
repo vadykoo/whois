@@ -4,6 +4,12 @@
 
 It is writed on Laravel and help users to find open information about domains.
 
+Requirements:
+- PHP 8.2 - 8.4
+- Composer
+- MySQL
+- Laravel 12
+
 Before run the project you should:
  - create .env file from .env.example 
  - set the mysql database connection (create DB Schema and add it to .env file)
