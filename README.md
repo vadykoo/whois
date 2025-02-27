@@ -2,12 +2,12 @@
 
 Is writed on Larave and help users to find open information about any domain.
 
+Before run the project we should create .env file from .env.example and set the database connection. (create DB and add it to .env file)
+
 For run the project you can run the following commands:
 
 ```bash
 composer install
-npm install
-npm run dev
 php artisan serve
 ```
 

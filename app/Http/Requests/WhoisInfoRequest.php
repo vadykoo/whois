@@ -14,7 +14,16 @@ class WhoisInfoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'domain' => ['required', 'string', 'regex:/^[^.]+\.[^.]+/']
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'domain.required' => 'Domain is required',
+            'domain.string' => 'Domain must be a string',
+            'domain.regex' => 'Invalid domain format'
         ];
     }
 }

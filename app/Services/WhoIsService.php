@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\WhoisServer;
+use App\Exceptions\WhoisException;
 
 class WhoIsService
 {
@@ -15,19 +16,27 @@ class WhoIsService
 
     public function lookup(string $url): string
     {
+
         //get top-level domain
-        $tld = $this->getTopLevelDomain($url);
+        $cleanDomain = $this->getClenDomain($url);
+        $tldArray = explode('.', $cleanDomain);
+        $tld = end($tldArray);
         $findServerWhoIs = $this->findServerWhoIs($tld);
-        $whoIsInfo = $this->getWhoIsInfo($findServerWhoIs, $url);
+        $whoIsInfo = $this->getWhoIsInfo($findServerWhoIs, $cleanDomain);
+
         return $whoIsInfo;
     }
 
-    private function getTopLevelDomain(string $url)
+    private function getClenDomain(string $url): string
     {
-        //remove all / and spaces
-        $url = preg_replace('/\s+/', '', $url);
-        $domainArray = explode(".", parse_url($url)['path']);
-        return end($domainArray);
+        // Sanitize and normalize the URL
+        $url = trim(strtolower($url));
+        // Remove protocol and www if present
+        $url = preg_replace('#^(https?://)?(www\.)?#i', '', $url);
+        // Remove query string and path
+        $url = preg_replace('#[?/].*$#', '', $url);
+
+        return $url;
     }
 
     private function findServerWhoIs(string $tld): string
