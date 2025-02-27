@@ -16,9 +16,16 @@
                         <input type="text" class="form-control" id="domain"
                                placeholder="cityhost.ua">
                         <button class="btn btn-primary" type="button" id="lookupBtn">
-                            Search
+                            Check WHOIS
                         </button>
                         <div class="invalid-feedback" id="errorMessage"></div>
+                    </div>
+                    <div class="form-text mt-2">
+                        <strong>Supported domains:</strong>
+                        <ul class="mb-0">
+                            <li>International domains: .com, .net</li>
+                            <li>Ukrainian domains: .ua, .com.ua, .kyiv.ua, .org.ua, .net.ua, .edu.ua, .gov.ua etc</li>
+                        </ul>
                     </div>
                 </div>
 
@@ -87,7 +94,7 @@
             })
             .catch(error => {
                 let message = 'An error occurred while fetching WHOIS information';
-                if (typeof error === 'object' && error.errors) {
+                if (typeof error === 'object' && error.message) {
                     message = error.message;
                 }
                 showError(message);
@@ -100,7 +107,6 @@
         }
 
         function showError(message) {
-            // console.log('consoleShow:', message);
             errorMessage.textContent = message;
             domainInput.classList.add('is-invalid');
         }

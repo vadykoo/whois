@@ -16,15 +16,18 @@ class WhoIsService
 
     public function lookup(string $url): string
     {
+        try {
+            // Get top-level domain tld
+            $cleanDomain = $this->getClenDomain($url);
+            $tldArray = explode('.', $cleanDomain);
+            $tld = end($tldArray);
+            $findServerWhoIs = $this->findServerWhoIs($tld);
+            $whoIsInfo = $this->getWhoIsInfo($findServerWhoIs, $cleanDomain);
 
-        //get top-level domain
-        $cleanDomain = $this->getClenDomain($url);
-        $tldArray = explode('.', $cleanDomain);
-        $tld = end($tldArray);
-        $findServerWhoIs = $this->findServerWhoIs($tld);
-        $whoIsInfo = $this->getWhoIsInfo($findServerWhoIs, $cleanDomain);
-
-        return $whoIsInfo;
+            return $whoIsInfo;
+        } catch (WhoisException $e) {
+            throw new WhoisException($e->getMessage());
+        }
     }
 
     private function getClenDomain(string $url): string
@@ -42,11 +45,10 @@ class WhoIsService
     private function findServerWhoIs(string $tld): string
     {
         $server = $this->whoIsServer->findByDomain($tld);
-        if ($server) {
-            return $server->whois_server;
+        if (!$server) {
+            throw new WhoisException(WhoisException::UNSUPPORTED_DOMAIN);
         }
-
-        return "Sorry, we do not have info about this domain";
+        return $server->whois_server;
     }
 
     private function getWhoIsInfo(string $server, string $url): string
@@ -57,7 +59,7 @@ class WhoIsService
 
         $sock = fsockopen($server, $port, $errno, $errstr, $timeout);
         if (!$sock) {
-            return "Error: $errno - $errstr";
+            throw new WhoisException(sprintf(WhoisException::CONNECTION_FAILED, $errstr));
         }
 
         fwrite($sock, $domain . "\r\n");
@@ -68,6 +70,10 @@ class WhoIsService
         }
 
         fclose($sock);
+
+        if (empty($response)) {
+            throw new WhoisException(WhoisException::NO_RESPONSE);
+        }
 
         return $response;
     }
