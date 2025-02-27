@@ -7,13 +7,24 @@ use App\Exceptions\WhoisException;
 
 class WhoIsService
 {
+    /**
+     * @var WhoisServer
+     */
     private WhoisServer $whoIsServer;
 
+    /**
+     * WhoIsService constructor.
+     */
     public function __construct()
     {
         $this->whoIsServer = new WhoisServer();
     }
-
+    /**
+     * Run a whois lookup on a domain
+     * @param string $cleanDomain
+     * @return string
+     * @throws WhoisException
+     */
     public function lookup(string $cleanDomain): string
     {
         try {
@@ -29,6 +40,11 @@ class WhoIsService
         }
     }
 
+    /**
+     * Get the clean domain
+     * @param string $url
+     * @return string
+     */
     public function getCleanDomain(string $url): string
     {
         // Sanitize and normalize the URL
@@ -41,6 +57,12 @@ class WhoIsService
         return $url;
     }
 
+    /**
+     * Find the whois server for a domain
+     * @param string $tld
+     * @return string
+     * @throws WhoisException
+     */
     private function findServerWhoIs(string $tld): string
     {
         $server = $this->whoIsServer->findByDomain($tld);
@@ -50,6 +72,13 @@ class WhoIsService
         return $server->whois_server;
     }
 
+    /**
+     * Get whois info from a server
+     * @param string $server
+     * @param string $url
+     * @return string
+     * @throws WhoisException
+     */
     private function getWhoIsInfo(string $server, string $url): string
     {
         $domain = parse_url($url)['path'];
