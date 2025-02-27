@@ -16,3 +16,4 @@ php artisan migrate
 php artisan key:generate
 php artisan serve
 ```
+Go to the link from the console (for example http://127.0.0.1:8000)
