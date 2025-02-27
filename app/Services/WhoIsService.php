@@ -14,11 +14,10 @@ class WhoIsService
         $this->whoIsServer = new WhoisServer();
     }
 
-    public function lookup(string $url): string
+    public function lookup(string $cleanDomain): string
     {
         try {
             // Get top-level domain tld
-            $cleanDomain = $this->getClenDomain($url);
             $tldArray = explode('.', $cleanDomain);
             $tld = end($tldArray);
             $findServerWhoIs = $this->findServerWhoIs($tld);
@@ -30,7 +29,7 @@ class WhoIsService
         }
     }
 
-    private function getClenDomain(string $url): string
+    public function getCleanDomain(string $url): string
     {
         // Sanitize and normalize the URL
         $url = trim(strtolower($url));
