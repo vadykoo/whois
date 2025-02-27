@@ -6,6 +6,7 @@ use App\Services\WhoIsService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\WhoisInfoRequest;
+use App\Http\Resources\WhoisResource;
 
 class WhoIsController extends Controller
 {
@@ -23,7 +24,7 @@ class WhoIsController extends Controller
         return Cache::remember("whois_$cleanDomain", now()->addDays(1), function () use ($domain) {
             $info = $this->whoIsService->lookup($domain);
 
-            return response()->json($info);
+            return new WhoisResource($info);
         });
     }
 }
